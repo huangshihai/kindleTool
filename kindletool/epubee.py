@@ -4,7 +4,7 @@ import json
 import random
 import os
 import time
-from kindletool.config import book_path, bookids_path, proxy_ips
+from kindletool.config import book_path, proxy_ips
 
 pwd_path = os.path.abspath(os.path.dirname(__file__))
 
@@ -12,7 +12,6 @@ pwd_path = os.path.abspath(os.path.dirname(__file__))
 class Epubee():
     def __init__(self):
         self.book_path = os.path.join(pwd_path, book_path)
-        self.bookids_path = os.path.join(pwd_path, bookids_path)
         self.proxy_ips = os.path.join(pwd_path, proxy_ips)
         self.proxy = None
         self.cookie = {}
@@ -197,30 +196,20 @@ class Epubee():
             booklist = json.loads(response.content.decode())['d']
         return booklist
 
-    def add_push_book(self, filename, bookid):
-        with open(self.bookids_path, 'a', encoding='utf-8') as fw:
-            fw.write(filename + '\t' + bookid + '\n')
-
-    def batch_download_books(self):
-        with open(self.bookids_path, 'r', encoding='utf-8') as fr:
-            for line in fr.readlines():
-                filename, bookid = line.split()
-                try:
-                    # proxy = self.choiceIP()
-                    # self.update_proxy(proxy)
-                    self.getCookie()
-                    uid = str(self.cookie.get('identify'))
-                    print(uid)
-                    time.sleep(1)
-                    self.del_book()
-                    self.add_book(bookid)
-                    time.sleep(3)
-                    books = self.getBookList()
-                    bid = books[0].get('bid')
-                    self.download(filename, bid)
-                    print('%s下载完成' % filename)
-                    time.sleep(5)
-                except:
-                    print("%s下载出错了" % filename)
-                    continue
-        os.remove(self.bookids_path)
+    def download_book(self, filename, bookid):
+        try:
+            # proxy = self.choiceIP()
+            # self.update_proxy(proxy)
+            self.getCookie()
+            uid = str(self.cookie.get('identify'))
+            print(uid)
+            time.sleep(1)
+            self.del_book()
+            self.add_book(bookid)
+            time.sleep(3)
+            books = self.getBookList()
+            bid = books[0].get('bid')
+            self.download(filename, bid)
+            print('%s下载完成' % filename)
+        except:
+            print("%s下载出错了" % (filename))

@@ -1,16 +1,12 @@
 # SMTP服务器
 mail_host = "smtp.163.com"
 # 用户名
-mail_user = "13600048767@163.com"
+mail_user = "*****@163.com"
 # 授权密码，非登录密码
-mail_pass = "1995911LQFZB"
+mail_pass = "*****"
 # 发件人邮箱(最好写全, 不然会失败)
-sender = '13600048767@163.com'
-# 接收邮件，可设置为你的QQ邮箱或者其他邮箱
-receivers = ['942212756@qq.com']
+sender = '*****@163.com'
 # 文件保存路径
 book_path = 'data/books'
-# bookids
-bookids_path = 'data/bookids.txt'
 # 代理ip
 proxy_ips = 'data/proxy_ips.txt'

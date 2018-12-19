@@ -1,3 +1,4 @@
+import os
 from .config import mail_host, mail_user, mail_pass, sender, book_path
 from .emailUtils import EmailUtil
 from .epubee import Epubee
@@ -11,6 +12,14 @@ epubee = Epubee()
 sendEmail = emailUtils.send_email
 updateProxy = epubee.update_proxy
 searchBook = epubee.get_search_list
-pushBook = epubee.add_push_book
-downloadBooks = epubee.batch_download_books
-books_path = epubee.book_path
+downloadBook = epubee.download_book
+
+
+def pushBook(filename, bookid, email):
+    receivers = [email]
+    book_path = os.path.join(epubee.book_path, filename)
+    if os.path.exists(book_path):
+        sendEmail(receivers, filename, filename, filename)
+    else:
+        epubee.download_book(filename, bookid)
+        sendEmail(receivers, filename, filename, filename)

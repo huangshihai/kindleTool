@@ -45,16 +45,3 @@ class EmailUtil():
             print("mail has been send successfully.")
         except smtplib.SMTPException as e:
             print(e)
-
-
-if __name__ == '__main__':
-    mail_host = "smtp.163.com"  # SMTP服务器
-    # mail_user = "13600048767@163.com"  # 用户名
-    # mail_pass = "1995911LQFZB"  # 授权密码，非登录密码
-    # sender = '13600048767@163.com'  # 发件人邮箱(最好写全, 不然会失败)
-    mail_user = "h_shihai@163.com"  # 用户名
-    mail_pass = "Hsh960405"  # 授权密码，非登录密码
-    sender = 'h_shihai@163.com'  # 发件人邮箱(最好写全, 不然会失败)
-    receivers = ['13600048767@kindle.cn']  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
-    emailUtil = EmailUtil('data\\', mail_host, mail_user, mail_pass, sender)
-    emailUtil.send_email(receivers, "当尼采哭泣 欧文·亚隆系列", '当尼采哭泣 欧文·亚隆系列', '当尼采哭泣(欧文_亚隆系列).mobi')
