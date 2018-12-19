@@ -33,7 +33,7 @@ class EmailUtil():
             att2 = MIMEText(open(os.path.join(self.file_path, filename), 'rb').read(), 'base64', 'utf-8')
             att2["Content-Type"] = 'application/octet-stream'
             att2["Content-Disposition"] = 'attachment; filename=%s' % self.get_pinyin(filename)
-            message.attach(att2)
+            message.attach(att2) 
         message['From'] = "{}".format(self.sender)
         message['To'] = ",".join(receivers)
         message['Subject'] = subject

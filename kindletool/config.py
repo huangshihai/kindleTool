@@ -9,6 +9,8 @@ sender = '13600048767@163.com'
 # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
 receivers = ['942212756@qq.com']
 # 文件保存路径
-file_path = 'data/'
-#代理ip
+book_path = 'data/books'
+# bookids
+bookids_path = 'data/bookids.txt'
+# 代理ip
 proxy_ips = 'data/proxy_ips.txt'

@@ -3,22 +3,29 @@ import requests
 import json
 import random
 import os
+import time
+from kindletool.config import book_path, bookids_path, proxy_ips
 
 pwd_path = os.path.abspath(os.path.dirname(__file__))
 
 
 class Epubee():
-    def __init__(self, file_path):
-        self.file_path = os.path.join(pwd_path, file_path)
+    def __init__(self):
+        self.book_path = os.path.join(pwd_path, book_path)
+        self.bookids_path = os.path.join(pwd_path, bookids_path)
+        self.proxy_ips = os.path.join(pwd_path, proxy_ips)
         self.proxy = None
         self.cookie = {}
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0',
         }
 
-    def choiceIP(self, ip_pool):
-        ip = random.choice(ip_pool)
-        proxy = {'http': ip, 'https': ip}
+    def choiceIP(self):
+        proxy = None
+        with open(self.proxy_ips, 'r', encoding='utf-8') as fr:
+            ip_pool = fr.readlines()
+            ip = random.choice(ip_pool).strip()
+            proxy = {'http': ip, 'https': ip}
         return proxy
 
     def update_proxy(self, proxy):
@@ -151,7 +158,7 @@ class Epubee():
         return t_key
 
     def download(self, filename, bid):
-        filename = os.path.join(self.file_path, filename)
+        filename = os.path.join(self.book_path, filename)
         cookie_str = self.cookie_toString()
         uid = str(self.cookie.get('identify'))
         t_key = self.get_key(bid)
@@ -170,9 +177,9 @@ class Epubee():
             code.write(down.content)
 
     def get_search_list(self, key=None):
-        dict = []
+        booklist = []
         if key == None:
-            return dict
+            return booklist
         url = 'http://cn.epubee.com/keys/get_ebook_list_search.asmx/getSearchList'
         data = {'skey': key}
         cookie_str = self.cookie_toString()
@@ -187,45 +194,33 @@ class Epubee():
         }
         response = requests.post(url, headers=header, json=data, proxies=self.proxy)
         if response.status_code == 200:
-            dict = json.loads(response.content.decode())['d']
-        return dict
+            booklist = json.loads(response.content.decode())['d']
+        return booklist
 
+    def add_push_book(self, filename, bookid):
+        with open(self.bookids_path, 'a', encoding='utf-8') as fw:
+            fw.write(filename + '\t' + bookid + '\n')
 
-if __name__ == '__main__':
-    loc = 'E:\\资料\\电子书\\kindle\\'
-    # 下载地址---F:\资料\电子书\kindle\   KxrbnqbpG9yIpkxWSozxtw%3d%3d
-    # while(True):
-    #
-    #     try:
-    #         # ip = random.choice(iplist)
-    #         # proxy={'http':ip,'https':ip}
-    #         # print('代理IP: %s', proxy.get('http'))
-    #         getCookie()
-    #         uid = str(cookie.get('identify'))
-    #         print('用户：', uid)
-    #         time.sleep(1)
-    #        # bookid = str(input('请输入：'))
-    #        # add_Book(cookie, bookid)
-    #        # time.sleep(3)
-    #         filename, bid = getBookList(cookie)
-    #         print('开始下载', filename)
-    #         download(filename,bid,cookie,loc)
-    #         print('done!')
-    #     except:
-    #         user_input=input('请输入Enter结束操作,按c继续')
-    #         if user_input=='\n':
-    #             break
-    #         elif user_input.lower()=='c':
-    #             continue
-    #         else:
-    #             break
-
-    # 获取图书测试
-    # ip = random.choice(iplist)
-    # proxy={'http':ip,'https':ip}
-    # print('代理IP: %s', proxy.get('http'))
-    # getCookie()
-    # uid = str(cookie.get('identify'))
-    # print('用户：', uid)
-    # time.sleep(1)
-    # del_books()
+    def batch_download_books(self):
+        with open(self.bookids_path, 'r', encoding='utf-8') as fr:
+            for line in fr.readlines():
+                filename, bookid = line.split()
+                try:
+                    # proxy = self.choiceIP()
+                    # self.update_proxy(proxy)
+                    self.getCookie()
+                    uid = str(self.cookie.get('identify'))
+                    print(uid)
+                    time.sleep(1)
+                    self.del_book()
+                    self.add_book(bookid)
+                    time.sleep(3)
+                    books = self.getBookList()
+                    bid = books[0].get('bid')
+                    self.download(filename, bid)
+                    print('%s下载完成' % filename)
+                    time.sleep(5)
+                except:
+                    print("%s下载出错了" % filename)
+                    continue
+        os.remove(self.bookids_path)
