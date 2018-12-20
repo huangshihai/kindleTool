@@ -9,20 +9,23 @@
 <div id="app">
     <h2 style="text-align: center;margin-top: 30px">kindle小工具</h2>
     <div style="margin-top: 50px;">
-            <div style="width: 70%;margin:0 auto">
-                <el-input placeholder="请输入内容" v-model="bookname" class="input-with-select">
-                    <el-button slot="append" @click="search" type="primary" icon="el-icon-search">搜索</el-button>
-                </el-input>
-                <el-row :gutter="10" v-for="(item, key) in books" :key="key" class="book">
-                    <el-col v-for="(book, index) in item" :key="index" :span="6">
-                        <div class="book_cover" @click="open_dialog(book)">
-                            <img :src="'http://cn.epubee.com/getCover.ashx?fpath='+book.Cover" class="book_img"/>
-                        </div>
-                        <div class="book_title">{{ book.Title }}</div>
-                    </el-col>
-                </el-row>
-            </div>
+        <div style="width: 70%;margin:0 auto">
+            <el-input placeholder="请输入内容" v-model="bookname" class="input-with-select">
+                <el-button slot="append" @click="search" type="primary" icon="el-icon-search">搜索</el-button>
+            </el-input>
+            <el-row :gutter="10" v-for="(item, key) in books" :key="key" class="book">
+                <el-col v-for="(book, index) in item" :key="index" :span="6">
+                    <div class="book_cover" @click="open_dialog(book)">
+                        <img :src="'http://cn.epubee.com/getCover.ashx?fpath='+book.Cover" class="book_img"/>
+                    </div>
+                    <div class="book_title">{{ book.Title }}</div>
+                </el-col>
+            </el-row>
         </div>
+    </div>
+    <div style="margin-top:75px;text-align: center">
+        <p>Copyright © 2018-2019 <a href="https://weibo.com/u/2793093201">未竟</a> 版权所有</p>
+    </div>
     <!-- 推送dialog -->
     <el-dialog title="推送到邮箱" :visible.sync="dialogFormVisible" width="30%">
         <p style="text-align: center">推送到kindle需要您把" 13600048767@163.com "</p>
@@ -119,6 +122,12 @@
     })
 </script>
 <style>
+    a {
+        display:inline-block;
+        text-decoration:none;
+        height:20px;
+        line-height:20px;
+    }
     .book {
         top: 40px;
         margin: 0 auto;
