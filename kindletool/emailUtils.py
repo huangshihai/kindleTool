@@ -29,7 +29,7 @@ def send_email(receivers, subject, content, filename=None):
     att1 = MIMEText(content, 'plain', 'utf-8')  # 内容, 格式, 编码
     message.attach(att1)
     if filename != None:
-        att2 = MIMEText(open(os.path.join(book_path, filename), 'rb').read(), 'base64', 'utf-8')
+        att2 = MIMEText(open(os.path.join(pwd_path, book_path, filename), 'rb').read(), 'base64', 'utf-8')
         att2["Content-Type"] = 'application/octet-stream'
         att2["Content-Disposition"] = 'attachment; filename=%s' % __get_pinyin__(filename)
         message.attach(att2)
