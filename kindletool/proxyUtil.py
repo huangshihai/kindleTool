@@ -4,7 +4,7 @@ import re
 import random
 import telnetlib
 import os
-from .config import proxy_ips
+from kindletool.config import proxy_ips
 
 pwd_path = os.path.abspath(os.path.dirname(__file__))
 filename = os.path.join(pwd_path, proxy_ips)

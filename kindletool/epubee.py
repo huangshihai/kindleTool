@@ -40,6 +40,7 @@ class Epubee():
 
     def getCookie(self):
         print('开始获取cookie')
+        self.cookie = {}
         self.cookie['ASP.NET_SessionId'] = self.getSessionid()
         url = 'http://cn.epubee.com//keys/genid_with_localid.asmx/genid_with_localid'
         data = {'localid': ''}
@@ -192,15 +193,15 @@ class Epubee():
             'Cookie': cookie_str,
             'Upgrade-Insecure-Requests': '1',
         }
-        response = requests.post(url, headers=header, json=data, proxies=self.proxy)
+        response = requests.post(url, headers=header, json=data)
         if response.status_code == 200:
             booklist = json.loads(response.content.decode())['d']
         return booklist
 
     def download_book(self, filename, bookid):
         try:
-            # proxy = self.choiceIP()
-            # self.update_proxy(proxy)
+            #proxy = self.choiceIP()
+            #self.update_proxy(proxy)
             self.getCookie()
             uid = str(self.cookie.get('identify'))
             print(uid)
@@ -212,5 +213,5 @@ class Epubee():
             bid = books[0].get('bid')
             self.download(filename, bid)
             print('%s下载完成' % filename)
-        except:
-            print("%s下载出错了" % (filename))
+        except Exception as e:
+            print("%s下载出错了,原因:%s" % (filename,e))
