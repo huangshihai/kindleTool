@@ -12,3 +12,6 @@ receivers = ['*****@kindle.cn']
 book_path = 'data/books'
 # 代理ip
 proxy_ips = 'data/proxy_ips.txt'
+# epubee账号密码
+eid = '*****@xx.com'
+upass = ''

@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-from bs4 import BeautifulSoup
-import requests
 import json
-import random
 import os
+import random
 import time
-from kindletool.config import book_path, proxy_ips
+
+import requests
+from bs4 import BeautifulSoup
+
+from kindletool.config import book_path, proxy_ips, eid, upass
 
 pwd_path = os.path.abspath(os.path.dirname(__file__))
 
@@ -39,20 +41,21 @@ class Epubee():
         return value
 
     def getCookie(self):
-        print('开始获取cookie')
-        self.cookie = {}
-        self.cookie['ASP.NET_SessionId'] = self.getSessionid()
-        url = 'http://cn.epubee.com//keys/genid_with_localid.asmx/genid_with_localid'
-        data = {'localid': ''}
-        response = requests.post(url, json=data, cookies=self.cookie, proxies=self.proxy)
-        data = (json.loads(response.content.decode()))['d'][0]
-        self.cookie['identify'] = data.get('ID')
-        self.cookie['identifyusername'] = data.get('UserName')
-        self.cookie['user_localid'] = data.get('Name')
-        self.cookie['uemail'] = data.get('email')
-        self.cookie['kindle_email'] = data.get('kindle_email')
-        self.cookie['isVip'] = '1'
-        self.cookie['leftshow'] = '1'
+        if not self.cookie:
+            print('开始获取cookie')
+            self.cookie = {}
+            self.cookie['ASP.NET_SessionId'] = self.getSessionid()
+            url = 'http://cn.epubee.com//keys/retrieve_cloud_id.asmx/Retrieve'
+            data = {'eID': eid, 'userpassword': upass}
+            response = requests.post(url, json=data, cookies=self.cookie, proxies=self.proxy)
+            data = (json.loads(response.content.decode()))['d'][0]
+            self.cookie['identify'] = data.get('ID')
+            self.cookie['eidentify'] = data.get('eID')
+            self.cookie['user_localid'] = data.get('Name')
+            self.cookie['identifyusername'] = data.get('UserName')
+            self.cookie['uemail'] = data.get('email')
+            self.cookie['kindle_email'] = data.get('kindle_email')
+            self.cookie['isVip'] = '1'
 
     def cookie_toString(self):
         cookie_str = ''
@@ -93,7 +96,7 @@ class Epubee():
             if len(books) > 0:
                 bids = '0,'
                 for book in books:
-                    bids += book.get("bid") + ','
+                    bids += book.get('bid') + ','
                     bids = bids[:-1]
         if bids != None:
             data = {'uid': uid, 'bids': bids}
@@ -124,7 +127,7 @@ class Epubee():
         header = {
             'Host': 'cn.epubee.com',
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
             'Accept-Language': 'en-US,en;q=0.5',
             'Accept-Encoding': 'gzip, deflate',
             'Cookie': cookie_str,
@@ -136,9 +139,8 @@ class Epubee():
         req = requests.get(url, headers=header, proxies=self.proxy)
         if req.status_code == 200:
             bsObj = BeautifulSoup(req.text, 'html.parser')
-            allbooks = bsObj.find_all('p', class_='allbooks')[0].find_all('a')[1].get_text().strip()
-            books_count = allbooks[allbooks.rfind('[') + 1:-1]
-            for i in range(int(books_count)):
+            allbooks = bsObj.find_all('tr', class_='parent')
+            for i in range(len(allbooks)):
                 name = bsObj.find('span', {'id': 'gvBooks_lblTitle_' + str(i)}).get_text()
                 format = bsObj.find('a', {'id': 'gvBooks_gvBooks_child_' + str(i) + '_hpdownload_0'}).get_text()
                 filename = name + format
@@ -200,8 +202,8 @@ class Epubee():
 
     def download_book(self, filename, bookid):
         try:
-            #proxy = self.choiceIP()
-            #self.update_proxy(proxy)
+            # proxy = self.choiceIP()
+            # self.update_proxy(proxy)
             self.getCookie()
             uid = str(self.cookie.get('identify'))
             print(uid)
@@ -214,4 +216,4 @@ class Epubee():
             self.download(filename, bid)
             print('%s下载完成' % filename)
         except Exception as e:
-            print("%s下载出错了,原因:%s" % (filename,e))
+            print('%s下载出错了,原因:%s' % (filename, e))
