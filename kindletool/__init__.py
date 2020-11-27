@@ -11,7 +11,7 @@ downloadBook = epubee.download_book
 
 def pushBook(filename, bookid, email):
     receivers = [email]
-    book_path = os.path.join(epubee.book_path, filename)
+    book_path = os.path.join(epubee.book_path,  bookid + '_' + filename)
     if not os.path.exists(book_path):
         epubee.download_book(filename, bookid)
-    emailUtils.push_book(receivers, filename)
+    emailUtils.push_book(receivers, filename, bookid)

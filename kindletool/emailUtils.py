@@ -2,7 +2,9 @@
 import smtplib
 import os
 from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
+from email import encoders
 from pypinyin import pinyin, Style
 import re
 from .config import mail_host, mail_user, mail_pass, sender, book_path
@@ -20,19 +22,21 @@ def __get_pinyin__(filename):
     return name_pinyin
 
 
-def push_book(receivers, filename):
-    send_email(receivers, filename, filename, filename)
+def push_book(receivers, filename, bookid):
+    send_email(receivers, filename, filename, filename, bookid)
 
 
-def send_email(receivers, subject, content, filename=None):
+def send_email(receivers, subject, content, filename=None, bookid=None):
     message = MIMEMultipart()
-    att1 = MIMEText(content, 'plain', 'utf-8')  # 内容, 格式, 编码
-    message.attach(att1)
-    if filename != None:
-        att2 = MIMEText(open(os.path.join(pwd_path, book_path, filename), 'rb').read(), 'base64', 'utf-8')
-        att2["Content-Type"] = 'application/octet-stream'
-        att2["Content-Disposition"] = 'attachment; filename=%s' % __get_pinyin__(filename)
-        message.attach(att2)
+    content_part = MIMEText(content, 'plain', 'utf-8')  # 内容, 格式, 编码
+    message.attach(content_part)
+    if filename and bookid:
+        with open(os.path.join(pwd_path, book_path, bookid + '_' + filename), 'rb') as f:
+            attachment_part = MIMEApplication(f.read())
+            encoders.encode_base64(attachment_part)
+            attachment_part.add_header('Content-Disposition', 'attachment; filename=' + __get_pinyin__(filename))
+            message.attach(attachment_part)
+
     message['From'] = "{}".format(sender)
     message['To'] = ",".join(receivers)
     message['Subject'] = subject
