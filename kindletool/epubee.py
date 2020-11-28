@@ -160,8 +160,8 @@ class Epubee():
         t_key = dict.get('d')[0]
         return t_key
 
-    def download(self, filename, bid, bookid):
-        filename = os.path.join(self.book_path, bookid + '_' + filename)
+    def download(self, filename, bid):
+        filename = os.path.join(self.book_path, filename)
         cookie_str = self.cookie_toString()
         uid = str(self.cookie.get('identify'))
         t_key = self.get_key(bid)
@@ -213,7 +213,7 @@ class Epubee():
             time.sleep(3)
             books = self.getBookList()
             bid = books[0].get('bid')
-            self.download(filename, bid, bookid)
+            self.download(filename, bid)
             print('%s下载完成' % filename)
         except Exception as e:
             print('%s下载出错了,原因:%s' % (filename, e))

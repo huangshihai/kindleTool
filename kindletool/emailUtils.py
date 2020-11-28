@@ -22,16 +22,16 @@ def __get_pinyin__(filename):
     return name_pinyin
 
 
-def push_book(receivers, filename, bookid):
-    send_email(receivers, filename, filename, filename, bookid)
+def push_book(receivers, filename):
+    send_email(receivers, filename, filename, filename)
 
 
-def send_email(receivers, subject, content, filename=None, bookid=None):
+def send_email(receivers, subject, content, filename=None):
     message = MIMEMultipart()
     content_part = MIMEText(content, 'plain', 'utf-8')  # 内容, 格式, 编码
     message.attach(content_part)
-    if filename and bookid:
-        with open(os.path.join(pwd_path, book_path, bookid + '_' + filename), 'rb') as f:
+    if filename:
+        with open(os.path.join(pwd_path, book_path, filename), 'rb') as f:
             attachment_part = MIMEApplication(f.read())
             encoders.encode_base64(attachment_part)
             attachment_part.add_header('Content-Disposition', 'attachment; filename=' + __get_pinyin__(filename))
