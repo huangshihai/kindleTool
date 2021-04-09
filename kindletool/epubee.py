@@ -34,7 +34,7 @@ class Epubee():
         self.proxy = proxy
 
     def getSessionid(self):
-        login_url = 'http://cn.epubee.com'
+        login_url = 'http://www.obook.vip'
         req = requests.get(login_url, headers=self.headers, proxies=self.proxy)
         str = req.headers['Set-Cookie']
         name, value = str.split(';')[0].split('=')
@@ -45,7 +45,7 @@ class Epubee():
             print('开始获取cookie')
             self.cookie = {}
             self.cookie['ASP.NET_SessionId'] = self.getSessionid()
-            url = 'http://cn.epubee.com//keys/retrieve_cloud_id.asmx/Retrieve'
+            url = 'http://www.obook.vip//keys/retrieve_cloud_id.asmx/Retrieve'
             data = {'eID': eid, 'userpassword': upass}
             response = requests.post(url, json=data, cookies=self.cookie, proxies=self.proxy)
             data = (json.loads(response.content.decode()))['d'][0]
@@ -68,10 +68,10 @@ class Epubee():
         uid = self.cookie.get('identify')
         cookie_str = self.cookie_toString()
         act = 'search'
-        url = 'http://cn.epubee.com/app_books/addbook.asmx/online_addbook'
+        url = 'http://www.obook.vip/app_books/addbook.asmx/online_addbook'
         data = {'bookid': bookid, 'uid': uid, 'act': act}
         header = {
-            'Host': 'cn.epubee.com',
+            'Host': 'www.obook.vip',
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.5',
@@ -88,7 +88,7 @@ class Epubee():
             print('书本加入成功')
 
     def del_book(self, bids=None):
-        url = 'http://cn.epubee.com/app_books/deletemybooks.asmx/deletemybooks'
+        url = 'http://www.obook.vip/app_books/deletemybooks.asmx/deletemybooks'
         uid = str(self.cookie.get('identify'))
         cookie_str = self.cookie_toString()
         if bids == None:
@@ -107,9 +107,9 @@ class Epubee():
                 'Connection': 'keep-alive',
                 'Content-Type': 'application/json',
                 'Cookie': cookie_str,
-                'Host': 'cn.epubee.com',
-                'Origin': 'http://cn.epubee.com',
-                'Referer': 'http://cn.epubee.com/files.aspx',
+                'Host': 'www.obook.vip',
+                'Origin': 'http://www.obook.vip',
+                'Referer': 'http://www.obook.vip/files.aspx',
                 'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0',
                 'X-Requested-With': 'XMLHttpRequest'
             }
@@ -122,10 +122,10 @@ class Epubee():
     def getBookList(self):
         books = []
         uid = str(self.cookie.get('identify'))
-        url = 'http://cn.epubee.com/files.aspx?userid=' + uid
+        url = 'http://www.obook.vip/files.aspx?userid=' + uid
         cookie_str = self.cookie_toString()
         header = {
-            'Host': 'cn.epubee.com',
+            'Host': 'www.obook.vip',
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
             'Accept-Language': 'en-US,en;q=0.5',
@@ -152,7 +152,7 @@ class Epubee():
             return books
 
     def get_key(self, bid):
-        url = 'http://cn.epubee.com/app_books/click_key.asmx/getkey'
+        url = 'http://www.obook.vip/app_books/click_key.asmx/getkey'
         data = {'isVip': 1, 'uid': self.cookie.get('identify'), 'strbid': bid}
         headers = {'Content-Type': 'application/json'}
         response = requests.post(url, headers=headers, json=data, proxies=self.proxy)
@@ -165,9 +165,9 @@ class Epubee():
         cookie_str = self.cookie_toString()
         uid = str(self.cookie.get('identify'))
         t_key = self.get_key(bid)
-        url = 'http://cn.epubee.com/getFile.ashx?bid=' + bid + '&uid=' + uid + '&t_key=' + t_key
+        url = 'http://www.obook.vip/getFile.ashx?bid=' + bid + '&uid=' + uid + '&t_key=' + t_key
         header = {
-            'Host': 'cn.epubee.com',
+            'Host': 'www.obook.vip',
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.5',
@@ -183,11 +183,11 @@ class Epubee():
         booklist = []
         if key == None:
             return booklist
-        url = 'http://cn.epubee.com/keys/get_ebook_list_search.asmx/getSearchList'
+        url = 'http://www.obook.vip/keys/get_ebook_list_search.asmx/getSearchList'
         data = {'skey': key}
         cookie_str = self.cookie_toString()
         header = {
-            'Host': 'cn.epubee.com',
+            'Host': 'www.obook.vip',
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.5',
